@@ -7,7 +7,7 @@ router.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'Views', 'index.html')); // Adjust path as needed
 });
 router.post('/', GenerateShortURL);
-
+router.get('/favicon.ico', (req, res) => res.status(204).end());
 router.get('/:shortId', gotoURL);
 
 module.exports = router;
