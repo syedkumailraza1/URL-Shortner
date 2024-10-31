@@ -3,31 +3,33 @@ const shortid = require('shortid');
 
 const GenerateShortURL = async (req,res)=>{
     try {
-        //get data from body
-        const body = req.body
-
-        //validate it
-        if(!body.url){
-            return res.status(400).json({error: 'Url is Required'})
+        // Get data from body
+        const { url } = req.body;
+    
+        // Validate input
+        if (!url) {
+            return res.status(400).json({ error: 'URL is required' });
         }
-
-        //generate short ID
-        const shortId = shortid()
-
-        //add data to database
-        const url = new URL({
+    
+        // Generate short ID
+        const shortId = shortid.generate();
+    
+        // Add data to the database
+        const newUrl = new URL({
             shortId: shortId,
-            redirectURL:body.url,
+            redirectURL: url, // Ensure `url` is a string
             visitHistory: []
-        })
-        await url.save();
-
-        //give response
-        res.status(200).json({id:shortId})
-    } catch (error) {
-        console.log('Error while Generating Short Url: ',error);
+        });
         
+        await newUrl.save();
+    
+        // Send response
+        res.status(200).json({ id: shortId });
+    } catch (error) {
+        console.error('Error while generating short URL:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
+    
 }
 
 const gotoURL = async(req,res)=>{
